@@ -90,3 +90,22 @@ def insert_project_hx_data(project_name, room_type, units_available, chinese_quo
     finally:
         # disconnect from server
         conn.close()
+
+def get_project_name_by_hyperlink(hyperlink):
+    # Open database connection
+    conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
+
+    # prepare a cursor object using cursor() method
+    cursor = conn.cursor()
+    sql = 'SELECT project_name FROM project WHERE hyperlink = "%s"' % (hyperlink)
+    try:
+        # Execute the command
+        cursor.execute(sql)
+        # Fatch all the results
+        results = cursor.fetchmany(size=1)
+        return str(results[0])[2:-3]
+    except mysql.Error:
+        print('Query get_project_name_bY_hyperlink Error! ', mysql.Error.__traceback__())
+    finally:
+        conn.close
+
