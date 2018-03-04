@@ -9,6 +9,7 @@ address = ''
 block = ''
 availability = ''
 project_name = ''
+postal_code = '000000'
 
 def blue_or_red(color):
     if color == '#cc0000':
@@ -36,13 +37,17 @@ for p in p_font:
     tooltip = p.get('aria-describedby')
     if str(tooltip).__len__() > 4:
         address = get_address(str(tooltip))
-        print(address)
+        # print(address)
         hyperlink = get_project_hyperlink()
         project_name = dao.get_project_name_by_hyperlink(hyperlink)
-        print(project_name)
+        # print(project_name)
     for font in fonts:
-        color = blue_or_red(str(font.get('color')))
-        print(font.text + ' ' + color)
+        availability = blue_or_red(str(font.get('color')))
+        block = font.text
+        # print(font.text + ' ' + color)
+        # print('Project: '+ project_name + ' Block ' + block + ' ' + address + ' Status: ' + availability )
+        dao.insert_block_info(postal_code, block, project_name, address, availability)
+
 
         
 

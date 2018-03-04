@@ -91,13 +91,15 @@ def insert_project_hx_data(project_name, room_type, units_available, chinese_quo
         # disconnect from server
         conn.close()
 
+
 def get_project_name_by_hyperlink(hyperlink):
     # Open database connection
     conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
 
     # prepare a cursor object using cursor() method
     cursor = conn.cursor()
-    sql = 'SELECT project_name FROM project WHERE hyperlink = "%s"' % (hyperlink)
+    sql = 'SELECT project_name FROM project WHERE hyperlink = "%s"' % (
+        hyperlink)
     try:
         # Execute the command
         cursor.execute(sql)
@@ -105,18 +107,26 @@ def get_project_name_by_hyperlink(hyperlink):
         results = cursor.fetchmany(size=1)
         return str(results[0])[2:-3]
     except mysql.Error:
-        print('Query get_project_name_bY_hyperlink Error! ', mysql.Error.__traceback__())
+        print('Query get_project_name_bY_hyperlink Error! ',
+              mysql.Error.__traceback__())
     finally:
         conn.close
 
-def insert_block_info(postal_code, block_number, project_name, street):
-    address = 'BLOCK ' + block_number + street + ' Singapore' + postal_code
+
+def insert_block_info(postal_code, block_number, project_name, street, status):
+    address = 'Block ' + block_number + ' ' + street + ' Singapore ' + postal_code
     # Open database connection
     conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
 
     # prepare a cursor object using cursor() method
     cursor = conn.cursor()
 
-    sql = 'INSERT INTO blocks (postal_code, block_number, project_name, address) VALUES ("%s", "%s", "%s", "%s")' % (
-        project_name, room_type, units_available, chinese_quota, malay_quota, others_quota, datetime.now().isoformat())
-
+    sql = 'INSERT INTO blocks (postal_code, block_number, project_name, address, status, last_updated) VALUES ("%s", "%s", "%s", "%s", "%s", "%s")' % (
+        postal_code, block_number, project_name, address, status, datetime.now().isoformat())
+    try:
+        cursor.execute(sql)
+        conn.commit()
+    except mysql.Error:
+        print('insert at insert_block_info Error!', mysql.Error.__traceback__())
+    finally:
+        conn.close()
