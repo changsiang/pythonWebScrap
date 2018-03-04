@@ -84,25 +84,53 @@ for town in town_list:
     if town not in existing_town_list:
         dao.insert_town_info(town)
 
+# Declare all necessary variables
+ROOT_URL = 'https://services2.hdb.gov.sg/webapp/BP13AWFlatAvail/BP13EBSFlatSearch?'
+array = []
+project_url = ""
+project_info_array = []
+
 # Capture Project Information and Insert into database
 tbody = soup.find_all('tbody')
-for rows in tbody:
-    table_row = rows.find_all('tr')
-    for tr in table_row:
+# iterate through each <tbody></tbody> tag found
+# Each <tbody> tag represent projects for each town
+for body in tbody:
+    # Find all <tr></tr> for each town project
+    tr_attr = body.find_all('tr')
+    # Each project has 2 <tr></tr> tag. Iterate through them
+    for tr in tr_attr:
+        # Get the attribute in the <tr id> tag. The format is <<BTOPeriod;Town;Room Type; Project Name>>
+        tr_len = str(tr['id'][:-1]).split(';').__len__()
+        # There is contamination from <<BTOPeriod;Town;Project Name>> tag. Use If condition to exclude that tag out
+        if tr_len > 3:
+            # Split the string and file it into project_info_array for later usage
+            project_info_array = str(tr['id']).split(';')
+            # Find URL for specific project
+            atag = tr.find_all('a')
+            for href in atag:
+                project_url = ROOT_URL + href.get('href')[68:-18]
+        # This is to get the various number attribute of flats offered
         td = tr.find_all('td')
-        count = tr.find_all('td', colspan='6')
-        for pn in count:
-            print(pn.string)
+        for cells in td:
+            for cell in cells:
+                # There are other string contamination for <td></td> tag
+                # I'm only interested in numbers. Use If condition to exclude non int values
+                if str(cell).isdigit():
+                    array.append(cell)
 
-for rows in tbody:
-    table_row = rows.find_all('tr')
-    rowlen = table_row.__len__()
-    print(rowlen)
-    for i in range(1, rowlen, 1):
-        tr = table_row[i]
-        td = tr.find_all('td')
-        a = tr.find_all('a')
-        href = [i.get('href')[68:-1] for i in a]
-        row = [i.text for i in td]
-        row.append(href)
-        print(row)
+        print('----------------------------------------------------------------------')
+
+        if project_info_array.__len__() > 0:
+            print('Project ID: ' + project_info_array[0])
+            print('Town: ' + project_info_array[1])
+            print('Room Type: ' + project_info_array[2])
+            print('Project Name: ' + project_info_array[3])
+
+        print('Project URL: ' + project_url)
+
+        if array.__len__() > 0:
+            print('Units Offered: ' + array[0])
+            print('Units Available: ' + array[1])
+            print('Chinese Quota: ' + array[2])
+            print('Malay Quota: ' + array[3])
+            print('Others Quota: ' + array[4])
