@@ -1,0 +1,61 @@
+------------- Archieved on 04 03 2018 -------------------------------------
+for href in soup.find_all('a'):
+    # print(href.get('href'))
+    if ((href.get('href')[:4]) == 'java'):
+        string_list.append(href.get('href')[68:-1])
+
+# print('string_list')
+
+for string in string_list:
+    print(string)
+
+tables = soup.find_all('table')
+for table in tables:
+    if table.findParent("table") is None:
+        print(str(table).replace(u'\xa0', u' '))
+
+print("------------------ Line Break ---------------------")
+
+project_count = 0
+
+tbody = soup.find_all('tbody')
+for rows in tbody:
+    table_row = rows.find_all('tr')
+    for tr in table_row:
+        td = tr.find_all('td')
+        count = tr.find_all('td', colspan='6')
+        if(count.__len__() > 0):
+            project_count += count.__len__()
+        a = tr.find_all('a')
+        href = [i.get('href')[68:-1] for i in a]
+        row = [i.text for i in td]
+        print(href)
+        print(row)
+
+
+# table_row = table.find_all('tr')
+
+# for tr in table_row:
+#     td = tr.find_all('td')
+#     row = [i.text for i in td]
+#     print(row)
+
+town = 'Sengkang'
+flat_type = 'BTO'
+des_type = 'A'
+ethnic = 'Y'
+flat = '3-Room%20(income%20ceiling%20$6,000)'
+view_option = 'A'
+dteBallot = '201708'
+projName = ''
+
+
+url = 'https://services2.hdb.gov.sg/webapp/BP13AWFlatAvail/BP13EBSFlatSearch?Town=' + town + '&Flat_Type=' + flat_type + '&DesType=' + \
+    des_type + '&ethnic=' + ethnic + '&Flat=' + flat + '&ViewOption=' + \
+    view_option + '&dteBallot=' + dteBallot + '&projName=' + projName
+
+print(url)
+print(project_count)
+
+
+------------- Archieved on 04 03 2018 -------------------------------------

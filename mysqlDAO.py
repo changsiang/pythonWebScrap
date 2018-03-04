@@ -48,15 +48,37 @@ def get_town_list():
     return town_list
 
 
-def insert_project_info(town, project_name, room_type, units_offered):
+def insert_project_info(period_id, town, project_name, room_type, units_offered, hyperlink):
     # Open database connection
     conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
 
     # prepare a cursor object using cursor() method
     cursor = conn.cursor()
 
-    sql = 'INSERT INTO Project (town, project_name, room_type, last_updated, units_offered) VALUES ("%s", "%s", "%s", "%s", "%s" )' % (
-        town, project_name, room_type, datetime.now().isoformat(), units_offered)
+    sql = 'INSERT INTO Project (town, project_name, room_type, last_updated, units_offered, hyperlink, period_id) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s")' % (
+        town, project_name, room_type, datetime.now().isoformat(), units_offered, hyperlink, period_id)
+
+    # execute insert command
+    try:
+        cursor.execute(sql)
+        conn.commit()
+    except mysql.Error:
+        conn.rollback()
+        print('SQL Error! ', mysql.Error.__traceback__())
+    finally:
+        # disconnect from server
+        conn.close()
+
+
+def insert_project_hx_data(project_name, room_type, units_available, chinese_quota, malay_quota, others_quota):
+    # Open database connection
+    conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
+
+    # prepare a cursor object using cursor() method
+    cursor = conn.cursor()
+
+    sql = 'INSERT INTO project_hx_data (project_name, room_type, units_available, chinese_quota, malay_quota, others_quota, last_updated) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s")' % (
+        project_name, room_type, units_available, chinese_quota, malay_quota, others_quota, datetime.now().isoformat())
 
     # execute insert command
     try:
