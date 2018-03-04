@@ -109,3 +109,14 @@ def get_project_name_by_hyperlink(hyperlink):
     finally:
         conn.close
 
+def insert_block_info(postal_code, block_number, project_name, street):
+    address = 'BLOCK ' + block_number + street + ' Singapore' + postal_code
+    # Open database connection
+    conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
+
+    # prepare a cursor object using cursor() method
+    cursor = conn.cursor()
+
+    sql = 'INSERT INTO blocks (postal_code, block_number, project_name, address) VALUES ("%s", "%s", "%s", "%s")' % (
+        project_name, room_type, units_available, chinese_quota, malay_quota, others_quota, datetime.now().isoformat())
+
