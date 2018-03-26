@@ -5,6 +5,8 @@ sauce = open('listUNITS.html', encoding='utf-8', errors='ignore')
 soup = bs.BeautifulSoup(sauce, 'lxml')
 
 # print(soup)
+
+
 def blue_or_red(color):
     if color == '#cc0000':
         return 'Taken'
@@ -12,6 +14,7 @@ def blue_or_red(color):
         return 'Available'
     else:
         return 'Unknown'
+
 
 # Get Project Name, Block Number, Room Type
 href = soup.find('a', {'class': 'mobile-nav-back js-mobile-nav-back'})
@@ -47,6 +50,9 @@ for unit in unitArray:
     print(unit, unitArray[unit])
 
 # Get Price for the corrsoponding units
-test = soup.find_all('span', {'data-selector': '#03-108'})
+test = soup.find_all('span', {'data-selector': '#15-126'})
 for t in test:
+    priceArray = t.get('title').replace('_', '').split('<br>')
     print(t.get('title').replace('_', '').split('<br>'))
+for price in priceArray:
+    print((price.split('-')[0]).strip(), (price.split('-')[1]).strip())
