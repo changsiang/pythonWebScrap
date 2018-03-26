@@ -70,5 +70,5 @@ for body in tbody:
             print('Malay Quota: ' + array[4])
             print('Others Quota: ' + array[5])
 
-            dao.insert_project_info(project_info_array[0], project_info_array[1], project_info_array[3], project_info_array[2], array[1], project_url)
-            dao.insert_project_hx_data(project_info_array[3], project_info_array[2], array[2], array[3], array[4], array[5])
+          #  dao.insert_project_info(project_info_array[0], project_info_array[1], project_info_array[3], project_info_array[2], array[1], project_url)
+          #  dao.insert_project_hx_data(project_info_array[3], project_info_array[2], array[2], array[3], array[4], array[5])

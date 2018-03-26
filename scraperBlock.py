@@ -45,8 +45,8 @@ for p in p_font:
         availability = blue_or_red(str(font.get('color')))
         block = font.text
         # print(font.text + ' ' + color)
-        # print('Project: '+ project_name + ' Block ' + block + ' ' + address + ' Status: ' + availability )
-        dao.insert_block_info(postal_code, block, project_name, address, availability)
+        print('Project: '+ project_name + ' Block ' + block + ' ' + address + ' Status: ' + availability )
+        # dao.insert_block_info(postal_code, block, project_name, address, availability)
 
 
         
