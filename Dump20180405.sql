@@ -28,10 +28,12 @@ CREATE TABLE `blocks` (
   `block_number` varchar(15) NOT NULL,
   `project_name` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL,
+  `last_updated` datetime NOT NULL,
   PRIMARY KEY (`idx_block`),
-  KEY `project_name_idx` (`project_name`),
-  CONSTRAINT `project_name` FOREIGN KEY (`project_name`) REFERENCES `project` (`town`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `fk_to_projectname_idx` (`project_name`),
+  CONSTRAINT `fk_to_projectname` FOREIGN KEY (`project_name`) REFERENCES `project` (`project_name`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,6 +42,7 @@ CREATE TABLE `blocks` (
 
 LOCK TABLES `blocks` WRITE;
 /*!40000 ALTER TABLE `blocks` DISABLE KEYS */;
+INSERT INTO `blocks` VALUES (13,'000000','170B','Rivervale Shores','Block 170B Sengkang East Dr Singapore 000000','Fully Taken','2018-03-04 23:08:41'),(14,'000000','172A','Rivervale Shores','Block 172A Sengkang East Dr Singapore 000000','Available','2018-03-04 23:08:41'),(15,'000000','172B','Rivervale Shores','Block 172B Sengkang East Dr Singapore 000000','Available','2018-03-04 23:08:42'),(16,'000000','172C','Rivervale Shores','Block 172C Sengkang East Dr Singapore 000000','Available','2018-03-04 23:08:42'),(17,'000000','172D','Rivervale Shores','Block 172D Sengkang East Dr Singapore 000000','Available','2018-03-04 23:08:42'),(18,'000000','173A','Rivervale Shores','Block 173A Sengkang East Dr Singapore 000000','Available','2018-03-04 23:08:42'),(19,'000000','173B','Rivervale Shores','Block 173B Sengkang East Dr Singapore 000000','Available','2018-03-04 23:08:42'),(20,'000000','173C','Rivervale Shores','Block 173C Sengkang East Dr Singapore 000000','Available','2018-03-04 23:08:42'),(21,'000000','173D','Rivervale Shores','Block 173D Sengkang East Dr Singapore 000000','Available','2018-03-04 23:08:42'),(22,'000000','174A','Rivervale Shores','Block 174A Sengkang East Dr Singapore 000000','Fully Taken','2018-03-04 23:08:42'),(23,'000000','170B','Rivervale Shores','Block 170B Sengkang East Dr Singapore 000000','Fully Taken','2018-03-05 09:24:44'),(24,'000000','172A','Rivervale Shores','Block 172A Sengkang East Dr Singapore 000000','Available','2018-03-05 09:24:44'),(25,'000000','172B','Rivervale Shores','Block 172B Sengkang East Dr Singapore 000000','Available','2018-03-05 09:24:44'),(26,'000000','172C','Rivervale Shores','Block 172C Sengkang East Dr Singapore 000000','Available','2018-03-05 09:24:44'),(27,'000000','172D','Rivervale Shores','Block 172D Sengkang East Dr Singapore 000000','Available','2018-03-05 09:24:45'),(28,'000000','173A','Rivervale Shores','Block 173A Sengkang East Dr Singapore 000000','Available','2018-03-05 09:24:45'),(29,'000000','173B','Rivervale Shores','Block 173B Sengkang East Dr Singapore 000000','Available','2018-03-05 09:24:45'),(30,'000000','173C','Rivervale Shores','Block 173C Sengkang East Dr Singapore 000000','Available','2018-03-05 09:24:45'),(31,'000000','173D','Rivervale Shores','Block 173D Sengkang East Dr Singapore 000000','Available','2018-03-05 09:24:45'),(32,'000000','174A','Rivervale Shores','Block 174A Sengkang East Dr Singapore 000000','Fully Taken','2018-03-05 09:24:45');
 /*!40000 ALTER TABLE `blocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -147,7 +150,10 @@ CREATE TABLE `units` (
   `isTaken` int(11) NOT NULL,
   `date_taken` date NOT NULL,
   `date_updated` date NOT NULL,
-  PRIMARY KEY (`floor`,`unit`)
+  `room_type` varchar(255) NOT NULL,
+  `price` decimal(10,0) NOT NULL DEFAULT '-1',
+  `year_of_lease` int(11) NOT NULL DEFAULT '99',
+  PRIMARY KEY (`floor`,`unit`,`year_of_lease`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -169,4 +175,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-04 19:00:47
+-- Dump completed on 2018-04-05 18:30:38
