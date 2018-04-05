@@ -46,13 +46,26 @@ for td in p_td:
 
 # Get Availabity Status
 for unit in unitArray:
-    unitArray[unit] = blue_or_red(unitArray[unit])
-    print(unit, unitArray[unit])
+    status = blue_or_red(unitArray[unit])
+    print(unit, status)
+    # Get Price for the corrosponding unit
+    if(status != 'Taken'):
+        data_selector = soup.find_all('span', {'data-selector': unit})
+        for ds in data_selector:
+            priceArray = ds.get('title').replace('_', '').split('<br>')
+            print(priceArray)
+            for price in priceArray:
+                priceSplit = price.split('-')
+                print(priceSplit)
+                unit_price = price.split('-')[0].strip().replace('$', '').replace(',', '')
+                print(unit_price)
+                year_of_lease = price.split('-')[1].strip()[:-6]
+                print(year_of_lease)
 
 # Get Price for the corrsoponding units
-test = soup.find_all('span', {'data-selector': '#15-126'})
-for t in test:
-    priceArray = t.get('title').replace('_', '').split('<br>')
-    print(t.get('title').replace('_', '').split('<br>'))
-for price in priceArray:
-    print((price.split('-')[0]).strip(), (price.split('-')[1]).strip())
+# test = soup.find_all('span', {'data-selector': '#15-126'})
+# for t in test:
+#    priceArray = t.get('title').replace('_', '').split('<br>')
+#    print(t.get('title').replace('_', '').split('<br>'))
+# for price in priceArray:
+#    print((price.split('-')[0]).strip(), (price.split('-')[1]).strip())
