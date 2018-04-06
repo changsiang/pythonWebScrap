@@ -53,10 +53,8 @@ for unit in unitArray:
         data_selector = soup.find_all('span', {'data-selector': unit})
         for ds in data_selector:
             priceArray = ds.get('title').replace('_', '').split('<br>')
-            print(priceArray)
-            for price in priceArray:
+            for price in priceArray[:-2]:
                 priceSplit = price.split('-')
-                print(priceSplit)
                 unit_price = price.split('-')[0].strip().replace('$', '').replace(',', '')
                 print(unit_price)
                 year_of_lease = price.split('-')[1].strip()[:-6]
