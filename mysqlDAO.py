@@ -23,7 +23,6 @@ def insert_town_info(town_name):
         # disconnect from server
         conn.close()
 
-
 def get_town_list():
     # Open database connection
     conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
@@ -47,6 +46,51 @@ def get_town_list():
 
     return town_list
 
+def get_all_project_hyperlink():
+    # Open database connection
+    conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
+
+    # prepare a cursor object using cursor() method
+    cursor = conn.cursor()
+    project_hyperlink = []
+    sql = 'SELECT hyperlink FROM project'
+    try:
+        # Execute the command
+        cursor.execute(sql)
+        # Fatch all the results
+        results = cursor.fetchall()
+        if results.__len__() > 0:
+            for result in results:
+                project_hyperlink.append(result[0])
+    except mysql.Error:
+        print('Query Error! ', mysql.Error.__traceback__())
+    finally:
+        conn.close()
+
+    return project_hyperlink
+
+def get_all_block_hyperlink():
+    # Open database connection
+    conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
+
+    # prepare a cursor object using cursor() method
+    cursor = conn.cursor()
+    block_hyperlink = []
+    sql = 'SELECT hyperlink FROM blocks'
+    try:
+        # Execute the command
+        cursor.execute(sql)
+        # Fatch all the results
+        results = cursor.fetchall()
+        if results.__len__() > 0:
+            for result in results:
+                block_hyperlink.append(result[0])
+    except mysql.Error:
+        print('Query Error! ', mysql.Error.__traceback__())
+    finally:
+        conn.close()
+
+    return block_hyperlink
 
 def insert_project_info(period_id, town, project_name, room_type, units_offered, hyperlink):
     # Open database connection
@@ -113,7 +157,7 @@ def get_project_name_by_hyperlink(hyperlink):
         conn.close
 
 
-def insert_block_info(postal_code, block_number, project_name, street, status):
+def insert_block_info(postal_code, block_number, project_name, street, status, hyperlink):
     address = 'Block ' + block_number + ' ' + street + ' Singapore ' + postal_code
     # Open database connection
     conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
@@ -121,12 +165,29 @@ def insert_block_info(postal_code, block_number, project_name, street, status):
     # prepare a cursor object using cursor() method
     cursor = conn.cursor()
 
-    sql = 'INSERT INTO blocks (postal_code, block_number, project_name, address, status, last_updated) VALUES ("%s", "%s", "%s", "%s", "%s", "%s")' % (
-        postal_code, block_number, project_name, address, status, datetime.now().isoformat())
+    sql = 'INSERT INTO blocks (postal_code, block_number, project_name, address, status, last_updated, hyperlink) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s")' % (
+        postal_code, block_number, project_name, address, status, datetime.now().isoformat(), hyperlink)
     try:
         cursor.execute(sql)
         conn.commit()
     except mysql.Error:
         print('insert at insert_block_info Error!', mysql.Error.__traceback__())
+    finally:
+        conn.close()
+
+def insert_units_info(block, floor, unit, project_name, isTaken, date_taken, date_updated, room_type, price, year_of_lease, size):
+    # Open database connection
+    conn = mysql.connect('localhost', 'root', 'password', 'hdb_data')
+
+    # prepare a cursor object using cursor() method
+    cursor = conn.cursor()
+
+    sql = 'INSERT INTO units (block, floor, unit, project_name, isTaken, date_taken, date_updated, room_type, price, year_of_lease, size) VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")' % (
+        block, floor, unit, project_name, isTaken, date_taken, date_updated, room_type, price, year_of_lease, size)
+    try:
+        cursor.execute(sql)
+        conn.commit()
+    except mysql.Error:
+        print('insert at insert_unit_info Error!', mysql.Error.__traceback__())
     finally:
         conn.close()

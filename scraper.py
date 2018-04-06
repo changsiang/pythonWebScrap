@@ -3,14 +3,19 @@ import mysqlDAO as dao
 import urllib.request
 import requests
 import codecs
+import datetime
+import scraperBlock
 
-
-class Main:
+class Project:
     def __init__(self):
+        # Declare all necessary variables
+        print('Project Started....' + datetime.datetime.now().__str__())
         self.ROOT_URL = 'https://services2.hdb.gov.sg/webapp/BP13AWFlatAvail/BP13EBSFlatSearch?'
         self.array = []
         self.project_info_array = []
         self.town_list = []
+        self.getHttp(
+            'https://services2.hdb.gov.sg/webapp/BP13AWFlatAvail/BP13SEstateSummary?sel=BTO')
 
     def getHttp(self, http_link):
         """ This method will open up a Http Page and Download its xml content 
@@ -20,16 +25,12 @@ class Main:
         # sauce = response.text
         sauce = open('listBTO.htm', encoding='utf-8', errors='ignore')
         soup = bs.BeautifulSoup(sauce, 'lxml')
-        # self.updateTownList(soup)
-        
+        self.updateTownList(soup)
 
-# Declare all necessary variables
     def updateTownList(self, soup):
         """ This method will retrieve the existing town list from the database
         and update with new towns that do not already exist in the database """
-        
         existing_town_list = dao.get_town_list()
-
         # H5 tag contains town name
         h5 = soup.find_all('h5')
         for town in h5:
@@ -41,6 +42,8 @@ class Main:
             # Check again existing list making sure no duplicated entry
             if town not in existing_town_list:
                 dao.insert_town_info(town)
+
+        self.updateProjectList(soup)
 
     def updateProjectList(self, soup):
         """ This method will retrieve the existing project list from the database
@@ -71,26 +74,24 @@ class Main:
                 # This is to get the various number attribute of flats offered
                 td = tr.find_all('td')
                 array = [i.text for i in td]
-                print('----------------------------------------------------------------------')
+                # print('----------------------------------------------------------------------')
 
                 if self.project_info_array.__len__() > 0 and array.__len__() > 5:
                     dao.insert_project_info(self.project_info_array[0], self.project_info_array[1], self.project_info_array[3], self.project_info_array[2], array[1], project_url)
                     dao.insert_project_hx_data(self.project_info_array[3], self.project_info_array[2], array[2], array[3], array[4], array[5])
 
                     # print('Project ID: ' + self.project_info_array[0])
-                    print('Town: ' + self.project_info_array[1])
-                    print('Room Type: ' + self.project_info_array[2])
-                    print('Project Name: ' + self.project_info_array[3])
+                    # print('Town: ' + self.project_info_array[1])
+                    # print('Room Type: ' + self.project_info_array[2])
+                    # print('Project Name: ' + self.project_info_array[3])
 
-                    # print('Project URL: ' + self.project_url)
-
+                    # print('Project URL: ' + project_url)
                     # print('Units Offered: ' + array[1])
                     # print('Units Available: ' + array[2])
                     # print('Chinese Quota: ' + array[3])
                     # print('Malay Quota: ' + array[4])
                     # print('Others Quota: ' + array[5])
-
-sauce = open('listBTO.htm', encoding='utf-8', errors='ignore')
-soups = bs.BeautifulSoup(sauce, 'lxml')
-main = Main()
-main.updateProjectList(soups)
+    # def proceed_to_block(self):
+    #    town_list = dao.get_town_list()
+    #    for town in town_list:
+    #        scraperBlock.Blocks(town)
