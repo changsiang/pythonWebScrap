@@ -3,23 +3,20 @@ import mysqlDAO as dao
 import datetime
 import requests
 
+
 class Units:
 
     def __init__(self, filename, hyperlink):
         print('Unit Started....' + datetime.datetime.now().__str__())
         self.project_name = ''
-        self.block_number = '' 
+        self.block_number = ''
         self.room_type = ''
+        self.project_hyperlink = hyperlink
         self.getHttp(filename, hyperlink)
-    
+
     def getHttp(self, filename, hyperlink):
-        # headers = {"user-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0"}
-        # response = requests.get(hyperlink, headers=headers)
-        # sauce = response.text
-        # file = open(filename ,'w')
-        # file.write(sauce)
-        # file.close() 
-        sauce = open(filename, encoding='utf-8', errors='ignore')
+        sauce = open(filename,
+                     encoding='utf-8', errors='ignore')
         soup = bs.BeautifulSoup(sauce, 'lxml')
         # print(soup)
         self.get_project_details(soup, hyperlink)
@@ -33,8 +30,6 @@ class Units:
             return 'Unknown'
 
     def get_project_details(self, soup, hyperlink):
-        # Get Project Name, Block Number, Room Type
-        # href = soup.find('a', {'class': 'mobile-nav-back js-mobile-nav-back'})
         hyperlink = hyperlink
         sArray = hyperlink.split('&')
         sArray = sArray[1: sArray.__len__() - 1]
@@ -67,26 +62,36 @@ class Units:
         # Get Availabity Status
         for unit in unitArray:
             status = self.blue_or_red(unitArray[unit])
-            # print(unit, status) # file DAO here
+            # print(unit, status)  # file DAO here
             # Get Price for the corrosponding unit
             if(status != 'Taken'):
                 data_selector = soup.find_all('span', {'data-selector': unit})
                 for ds in data_selector:
                     priceArray = ds.get('title').replace('_', '').split('<br>')
-                    size = priceArray[priceArray.__len__() - 1].replace('Sqm', '')
+                    size = priceArray[priceArray.__len__() -
+                                      1].replace('Sqm', '')
                     # print('size', size)
                     for price in priceArray[:-2]:
                         # priceSplit = price.split('-')
-                        unit_price = price.split('-')[0].strip().replace('$', '').replace(',', '')
+                        unit_price = price.split(
+                            '-')[0].strip().replace('$', '').replace(',', '')
                         # print(unit_price)
-                        year_of_lease = price.split('-')[1].strip()[:-6]
+                        # print(price)
+                        if price.split('-').__len__() > 1:
+                            year_of_lease = price.split('-')[1].strip()[:-6]
+                        else:
+                            year_of_lease = 99  # This is default
                         # print(year_of_lease)
-                        # print(self.block_number, str(unit).split('-')[0].replace('#', ''), str(unit).split('-')[1] ,self.project_name, status, datetime.datetime.now(), datetime.datetime.now(), self.room_type, unit_price, year_of_lease, size)
-                        dao.insert_units_info(self.block_number, str(unit).split('-')[0].replace('#', ''), str(unit).split('-')[1] ,self.project_name, status, datetime.datetime.now(), datetime.datetime.now(), self.room_type, unit_price, year_of_lease, size)
+                        # print(self.block_number, str(unit).split('-')[0].replace('#', ''), str(unit).split('-')[
+                        #     1], self.project_name, status, datetime.datetime.now(), datetime.datetime.now(), self.room_type, unit_price, year_of_lease, str(size).replace('(3Gen)', ''))
+                        dao.insert_units_info(self.block_number, str(unit).split('-')[0].replace('#', ''), str(unit).split('-')[
+                                              1], self.project_name, status, datetime.datetime.now(), datetime.datetime.now(), self.room_type, unit_price, year_of_lease, str(size).replace('(3Gen)', ''))
             else:
-                dao.insert_units_info(self.block_number, str(unit).split('-')[0].replace('#', ''), str(unit).split('-')[1] ,self.project_name, status, datetime.datetime.now(), datetime.datetime.now(), self.room_type, -1, -1, -1)
+                dao.insert_units_info(self.block_number, str(unit).split('-')[0].replace('#', ''), str(unit).split('-')[1], self.project_name, status, datetime.datetime.now(), datetime.datetime.now(), self.room_type, -1, -1, -1)  # Taken unit has no more data
+        print('Units Ends... With', self.project_hyperlink)
+        
 
-#dao.insert_units_info(self.block_number, str(unit).split('-')[0].replace('#', ''), self.project_name, status, datetime.datetime.now(), datetime.datetime.now(), self.room_type, unit_price, year_of_lease, size)
+# dao.insert_units_info(self.block_number, str(unit).split('-')[0].replace('#', ''), self.project_name, status, datetime.datetime.now(), datetime.datetime.now(), self.room_type, unit_price, year_of_lease, size)
 # def insert_units_info(self.block, floor, unit, self.project_name, isTaken, date_taken, date_updated, self.room_type, price, year_of_lease, size):
 # Get Price for the corrsoponding units
 # test = soup.find_all('span', {'data-selector': '#15-126'})
@@ -95,3 +100,4 @@ class Units:
 #    print(t.get('title').replace('_', '').split('<br>'))
 # for price in priceArray:
 #    print((price.split('-')[0]).strip(), (price.split('-')[1]).strip())
+# Units('Hello', 'https://services2.hdb.gov.sg/webapp/BP13AWFlatAvail/BP13EBSFlatSearch?Town=Sengkang&Flat_Type=BTO&selectedTown=Sengkang&Flat=5-Room/3Gen&ethnic=Y&ViewOption=A&Block=461A&DesType=A&EthnicA=Y&EthnicM=&EthnicC=&EthnicO=&numSPR=&dteBallot=201711&Neighbourhood=N4&Contract=C31&BonusFlats1=N&searchDetails=&brochure=false')

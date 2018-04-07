@@ -34,7 +34,7 @@ class Blocks:
             title = p.get('title')
             if title != None:
                 address = title
-                print(address)
+                # print(address)
                 hyperlink = self.project_hyperlink
                 project_name = dao.get_project_name_by_hyperlink(hyperlink)
             # print(project_name)
@@ -46,6 +46,7 @@ class Blocks:
                 #      ' Status: ' + availability + ' Hyperlink ' + self.get_block_hyperlink(soup, block))
                 dao.insert_block_info(self.postal_code, block, project_name, address,
                                       availability, self.get_block_hyperlink(soup, block, self.project_hyperlink))
+        print('Block Ends... With', self.project_hyperlink)
 
     def blue_or_red(self, color):
         if color == '#cc0000':
