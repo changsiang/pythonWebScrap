@@ -2,9 +2,10 @@ import bs4 as bs
 import mysqlDAO as dao
 import datetime
 
+
 class Blocks:
 
-    def __init__(self, http_link):
+    def __init__(self, filename, hyperlink):
         # Declare all using variables
         print('Block Started....' + datetime.datetime.now().__str__())
         self.address = ''
@@ -12,13 +13,15 @@ class Blocks:
         self.availability = ''
         self.project_name = ''
         self.postal_code = '000000'
-        self.getHttp(http_link)
+        self.project_hyperlink = hyperlink
+        self.getHttp(filename)
 
-    def getHttp(self, http_link):
+    def getHttp(self, filename):
         # headers = {"user-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0"}
         # response = requests.get(http_link, headers=headers)
         # sauce = response.text
-        sauce = open('listBLOCK.html', encoding='utf-8', errors='ignore')
+        sauce = open(filename,
+                     encoding='utf-8', errors='ignore')
         soup = bs.BeautifulSoup(sauce, 'lxml')
         self.get_block_number(soup)
 
@@ -28,20 +31,21 @@ class Blocks:
 
         for p in p_font:
             fonts = p.find_all('font')
-            tooltip = p.get('aria-describedby')
-            if str(tooltip).__len__() > 4:
-                address = self.get_address(str(tooltip), soup)
-                # print(address)
-                hyperlink = self.get_project_hyperlink(soup)
+            title = p.get('title')
+            if title != None:
+                address = title
+                print(address)
+                hyperlink = self.project_hyperlink
                 project_name = dao.get_project_name_by_hyperlink(hyperlink)
-                # print(project_name)
+            # print(project_name)
             for font in fonts:
                 availability = self.blue_or_red(str(font.get('color')))
                 block = font.text
                 # print(font.text + ' ' + color)
                 # print('Project: ' + project_name + ' Block ' + block + ' ' + address +
-                #       ' Status: ' + availability + ' Hyperlink ' + self.get_block_hyperlink(soup, block))
-                dao.insert_block_info(self.postal_code, block, project_name, address, availability, self.get_block_hyperlink(soup, block))
+                #      ' Status: ' + availability + ' Hyperlink ' + self.get_block_hyperlink(soup, block))
+                dao.insert_block_info(self.postal_code, block, project_name, address,
+                                      availability, self.get_block_hyperlink(soup, block, self.project_hyperlink))
 
     def blue_or_red(self, color):
         if color == '#cc0000':
@@ -63,7 +67,7 @@ class Blocks:
         hyperlink = a_tags.get('href')[:-1]
         return hyperlink
 
-    def get_block_hyperlink(self, soup, block):
+    def get_block_hyperlink(self, soup, block, project_hyperlink):
         div = soup.find_all('div')
         for d in div:
             di = d.get('onclick')
@@ -71,10 +75,10 @@ class Blocks:
                 check_blk = str(di).replace('checkBlk', '').replace(
                     '\'', '').replace('(', '').replace(')', '').replace(';', '').split(',')
                 if(check_blk[0] == block):
-                    return self.block_hyperlink(soup, block, check_blk[1], check_blk[2])
+                    return self.block_hyperlink(soup, block, check_blk[1], check_blk[2], project_hyperlink)
 
-    def block_hyperlink(self, soup, block, neighbourhood, contract):
-        project_link = self.get_project_hyperlink(soup)
+    def block_hyperlink(self, soup, block, neighbourhood, contract, project_hyperlink):
+        project_link = project_hyperlink
         sArray = str(project_link).split('&')
         projParam = {}
         for param in sArray:

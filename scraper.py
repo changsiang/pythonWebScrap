@@ -7,23 +7,22 @@ import datetime
 import scraperBlock
 
 class Project:
-    def __init__(self):
+    def __init__(self, filename):
         # Declare all necessary variables
         print('Project Started....' + datetime.datetime.now().__str__())
         self.ROOT_URL = 'https://services2.hdb.gov.sg/webapp/BP13AWFlatAvail/BP13EBSFlatSearch?'
         self.array = []
         self.project_info_array = []
         self.town_list = []
-        self.getHttp(
-            'https://services2.hdb.gov.sg/webapp/BP13AWFlatAvail/BP13SEstateSummary?sel=BTO')
+        self.getHttp(filename)
 
-    def getHttp(self, http_link):
+    def getHttp(self, filename):
         """ This method will open up a Http Page and Download its xml content 
         It is expected the variable http_link to be https://services2.hdb.gov.sg/webapp/BP13AWFlatAvail/BP13SEstateSummary?sel=BTO """
         # headers = {"user-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0"}
         # response = requests.get(http_link, headers=headers)
         # sauce = response.text
-        sauce = open('listBTO.htm', encoding='utf-8', errors='ignore')
+        sauce = open(filename, encoding='utf-8', errors='ignore')
         soup = bs.BeautifulSoup(sauce, 'lxml')
         self.updateTownList(soup)
 
@@ -70,7 +69,7 @@ class Project:
                     # Find URL for specific project
                     atag = tr.find_all('a')
                     for href in atag:
-                        project_url = self.ROOT_URL + href.get('href')[68:-18]
+                        project_url = self.ROOT_URL + href.get('href')[66:-18]
                 # This is to get the various number attribute of flats offered
                 td = tr.find_all('td')
                 array = [i.text for i in td]

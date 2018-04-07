@@ -1,24 +1,28 @@
 import bs4 as bs
 import mysqlDAO as dao
 import datetime
+import requests
 
 class Units:
 
-    def __init__(self, http_link):
+    def __init__(self, filename, hyperlink):
         print('Unit Started....' + datetime.datetime.now().__str__())
-        self.getHttp(http_link)
-        self.project_name
-        self.block_number
-        self.room_type
-
-    def getHttp(self, http_link):
+        self.project_name = ''
+        self.block_number = '' 
+        self.room_type = ''
+        self.getHttp(filename, hyperlink)
+    
+    def getHttp(self, filename, hyperlink):
         # headers = {"user-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0"}
-        # response = requests.get(http_link, headers=headers)
+        # response = requests.get(hyperlink, headers=headers)
         # sauce = response.text
-        sauce = open('listUNITS.html', encoding='utf-8', errors='ignore')
+        # file = open(filename ,'w')
+        # file.write(sauce)
+        # file.close() 
+        sauce = open(filename, encoding='utf-8', errors='ignore')
         soup = bs.BeautifulSoup(sauce, 'lxml')
         # print(soup)
-        self.get_project_details(soup)
+        self.get_project_details(soup, hyperlink)
 
     def blue_or_red(self, color):
         if color == '#cc0000':
@@ -28,10 +32,10 @@ class Units:
         else:
             return 'Unknown'
 
-    def get_project_details(self, soup):
+    def get_project_details(self, soup, hyperlink):
         # Get Project Name, Block Number, Room Type
-        href = soup.find('a', {'class': 'mobile-nav-back js-mobile-nav-back'})
-        hyperlink = href.get('href')[:-1]
+        # href = soup.find('a', {'class': 'mobile-nav-back js-mobile-nav-back'})
+        hyperlink = hyperlink
         sArray = hyperlink.split('&')
         sArray = sArray[1: sArray.__len__() - 1]
         projParam = {}
